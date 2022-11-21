@@ -1,19 +1,14 @@
 {
   "private": true,
-  "workspaces": [
-    "packages/@vssue/*",
-    "packages/vssue",
-    "packages/docs"
-  ],
   "scripts": {
-    "build": "lerna run build --stream --ignore docs",
-    "build:docs": "yarn workspace docs build",
-    "dev": "yarn workspace vssue dev",
-    "dev:docs": "yarn workspace docs dev",
-    "postinstall": "lerna run build --stream --ignore docs --ignore vssue",
+    "build": "pnpm --filter vssue... build",
+    "build:docs": "pnpm workspace docs build",
+    "dev": "pnpm workspace vssue dev",
+    "dev:docs": "pnpm workspace docs dev",
+    "postinstall": "pnpm --filter @vssue/* build",
     "lint": "eslint --ext .js,.ts,.vue packages/",
     "release": "node scripts/release.js",
-    "staging": "yarn workspace vssue staging",
+    "staging": "pnpm workspace vssue staging",
     "test": "jest"
   },
   "husky": {
