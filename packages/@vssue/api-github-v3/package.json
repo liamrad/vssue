@@ -31,7 +31,7 @@
     "vssue": "workspace:^1.4.8"
   },
   "devDependencies": {
-    "axios-mock-adapter": "^1.16.0"
+    "axios-mock-adapter": "^1.21.2"
   },
   "publishConfig": {
     "access": "public"
