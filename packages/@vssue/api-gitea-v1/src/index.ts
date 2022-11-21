@@ -1,26 +1,27 @@
-import { VssueAPI } from 'vssue';
+import type { VssueAPI } from 'vssue'
 
-import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
+import type { AxiosInstance, AxiosRequestConfig } from 'axios'
+import axios from 'axios'
 
-import { buildURL, concatURL, getCleanURL, parseQuery } from '@vssue/utils';
+import { buildURL, concatURL, getCleanURL, parseQuery } from '@vssue/utils'
 
 import {
-  normalizeUser,
-  normalizeIssue,
-  normalizeComment,
-  normalizeReactions,
   mapReactionName,
-} from './utils';
+  normalizeComment,
+  normalizeIssue,
+  normalizeReactions,
+  normalizeUser,
+} from './utils'
 
-import {
+import type {
   ResponseAccessToken,
-  ResponseUser,
-  ResponseIssue,
   ResponseComment,
+  ResponseIssue,
   ResponseLabel,
   ResponseMarkdown,
   ResponseReaction,
-} from './types';
+  ResponseUser,
+} from './types'
 
 /**
  * Gitea API V1
@@ -30,15 +31,15 @@ import {
  * @see https://gitea.com/api/swagger
  */
 export default class GiteaV1 implements VssueAPI.Instance {
-  baseURL: string;
-  owner: string;
-  repo: string;
-  labels: Array<string>;
-  clientId: string;
-  clientSecret: string;
-  state: string;
-  proxy: string | ((url: string) => string);
-  $http: AxiosInstance;
+  baseURL: string
+  owner: string
+  repo: string
+  labels: Array<string>
+  clientId: string
+  clientSecret: string
+  state: string
+  proxy: string | ((url: string) => string)
+  $http: AxiosInstance
 
   constructor({
     baseURL = 'https://gitea.com',
@@ -51,25 +52,25 @@ export default class GiteaV1 implements VssueAPI.Instance {
     proxy,
   }: VssueAPI.Options) {
     /* istanbul ignore if */
-    if (typeof clientSecret === 'undefined' || typeof proxy === 'undefined') {
-      throw new Error('clientSecret and proxy is required for Gitea V1');
-    }
-    this.baseURL = baseURL;
-    this.owner = owner;
-    this.repo = repo;
-    this.labels = labels;
+    if (typeof clientSecret === 'undefined' || typeof proxy === 'undefined')
+      throw new Error('clientSecret and proxy is required for Gitea V1')
 
-    this.clientId = clientId;
-    this.clientSecret = clientSecret;
-    this.state = state;
-    this.proxy = proxy;
+    this.baseURL = baseURL
+    this.owner = owner
+    this.repo = repo
+    this.labels = labels
+
+    this.clientId = clientId
+    this.clientSecret = clientSecret
+    this.state = state
+    this.proxy = proxy
 
     this.$http = axios.create({
       baseURL: concatURL(baseURL, 'api/v1'),
       headers: {
         Accept: 'application/json',
       },
-    });
+    })
   }
 
   /**
@@ -84,7 +85,7 @@ export default class GiteaV1 implements VssueAPI.Instance {
         reactable: true,
         sortable: false,
       },
-    };
+    }
   }
 
   /**
@@ -100,8 +101,8 @@ export default class GiteaV1 implements VssueAPI.Instance {
         redirect_uri: window.location.href,
         response_type: 'code',
         state: this.state,
-      }
-    );
+      },
+    )
   }
 
   /**
@@ -113,24 +114,24 @@ export default class GiteaV1 implements VssueAPI.Instance {
    * If the `code` and `state` exist in the query, and the `state` matches, remove them from query, and try to get the access token.
    */
   async handleAuth(): Promise<VssueAPI.AccessToken> {
-    const query = parseQuery(window.location.search);
+    const query = parseQuery(window.location.search)
     if (query.code) {
-      if (query.state !== this.state) {
-        return null;
-      }
+      if (query.state !== this.state)
+        return null
+
       // the `code` from gitea is uri encoded
       // typically includes an encoded `=` -> `%3D`
-      const code = decodeURIComponent(query.code);
-      delete query.code;
-      delete query.state;
-      const replaceURL =
-        buildURL(getCleanURL(window.location.href), query) +
-        window.location.hash;
-      window.history.replaceState(null, '', replaceURL);
-      const accessToken = await this.getAccessToken({ code });
-      return accessToken;
+      const code = decodeURIComponent(query.code)
+      delete query.code
+      delete query.state
+      const replaceURL
+        = buildURL(getCleanURL(window.location.href), query)
+        + window.location.hash
+      window.history.replaceState(null, '', replaceURL)
+      const accessToken = await this.getAccessToken({ code })
+      return accessToken
     }
-    return null;
+    return null
   }
 
   /**
@@ -139,17 +140,17 @@ export default class GiteaV1 implements VssueAPI.Instance {
    * @see https://docs.gitea.io/en-us/oauth2-provider/
    */
   async getAccessToken({ code }: { code: string }): Promise<string> {
-    const originalURL = concatURL(this.baseURL, 'login/oauth/access_token');
-    const proxyURL =
-      typeof this.proxy === 'function' ? this.proxy(originalURL) : this.proxy;
+    const originalURL = concatURL(this.baseURL, 'login/oauth/access_token')
+    const proxyURL
+      = typeof this.proxy === 'function' ? this.proxy(originalURL) : this.proxy
     const { data } = await this.$http.post<ResponseAccessToken>(proxyURL, {
       client_id: this.clientId,
       client_secret: this.clientSecret,
-      code: code,
+      code,
       grant_type: 'authorization_code',
       redirect_uri: window.location.href,
-    });
-    return data.access_token;
+    })
+    return data.access_token
   }
 
   /**
@@ -160,12 +161,12 @@ export default class GiteaV1 implements VssueAPI.Instance {
   async getUser({
     accessToken,
   }: {
-    accessToken: VssueAPI.AccessToken;
+    accessToken: VssueAPI.AccessToken
   }): Promise<VssueAPI.User> {
     const { data } = await this.$http.get<ResponseUser>('user', {
       headers: { Authorization: `bearer ${accessToken}` },
-    });
-    return normalizeUser(data, this.baseURL);
+    })
+    return normalizeUser(data, this.baseURL)
   }
 
   /**
@@ -179,16 +180,16 @@ export default class GiteaV1 implements VssueAPI.Instance {
     issueId,
     issueTitle,
   }: {
-    accessToken: VssueAPI.AccessToken;
-    issueId?: string | number;
-    issueTitle?: string;
+    accessToken: VssueAPI.AccessToken
+    issueId?: string | number
+    issueTitle?: string
   }): Promise<VssueAPI.Issue | null> {
-    const options: AxiosRequestConfig = {};
+    const options: AxiosRequestConfig = {}
 
     if (accessToken) {
       options.headers = {
         Authorization: `bearer ${accessToken}`,
-      };
+      }
     }
 
     if (issueId) {
@@ -196,43 +197,44 @@ export default class GiteaV1 implements VssueAPI.Instance {
         options.params = {
           // to avoid caching
           timestamp: Date.now(),
-        };
+        }
         const { data } = await this.$http.get<ResponseIssue>(
           `repos/${this.owner}/${this.repo}/issues/${issueId}`,
-          options
-        );
-        return normalizeIssue(data, this.baseURL, this.owner, this.repo);
-      } catch (e) {
-        if (e.response && e.response.status === 404) {
-          return null;
-        } else {
-          throw e;
-        }
+          options,
+        )
+        return normalizeIssue(data, this.baseURL, this.owner, this.repo)
       }
-    } else {
+      catch (e: any) {
+        if (e.response && e.response.status === 404)
+          return null
+        else
+          throw e
+      }
+    }
+    else {
       /**
        * Gitea only supports using label ids to get issues
        */
-      const allLabels = await this.getLabels({ accessToken });
+      const allLabels = await this.getLabels({ accessToken })
       const labels = this.labels
         .filter(label => allLabels.find(item => item.name === label))
-        .map(label => allLabels.find(item => item.name === label)!.id);
+        .map(label => allLabels.find(item => item.name === label)!.id)
 
       options.params = {
         labels,
         q: issueTitle,
         // to avoid caching
         timestamp: Date.now(),
-      };
+      }
 
       const { data } = await this.$http.get<ResponseIssue[]>(
         `repos/${this.owner}/${this.repo}/issues`,
-        options
-      );
+        options,
+      )
       const issue = data
         .map(item => normalizeIssue(item, this.baseURL, this.owner, this.repo))
-        .find(item => item.title === issueTitle);
-      return issue || null;
+        .find(item => item.title === issueTitle)
+      return issue || null
     }
   }
 
@@ -246,9 +248,9 @@ export default class GiteaV1 implements VssueAPI.Instance {
     title,
     content,
   }: {
-    accessToken: VssueAPI.AccessToken;
-    title: string;
-    content: string;
+    accessToken: VssueAPI.AccessToken
+    title: string
+    content: string
   }): Promise<VssueAPI.Issue> {
     /**
      * Gitea only supports using label ids to create issue
@@ -258,9 +260,9 @@ export default class GiteaV1 implements VssueAPI.Instance {
         this.postLabel({
           accessToken,
           label,
-        })
-      )
-    );
+        }),
+      ),
+    )
 
     const { data } = await this.$http.post<ResponseIssue>(
       `repos/${this.owner}/${this.repo}/issues`,
@@ -271,9 +273,9 @@ export default class GiteaV1 implements VssueAPI.Instance {
       },
       {
         headers: { Authorization: `bearer ${accessToken}` },
-      }
-    );
-    return normalizeIssue(data, this.baseURL, this.owner, this.repo);
+      },
+    )
+    return normalizeIssue(data, this.baseURL, this.owner, this.repo)
   }
 
   /**
@@ -287,51 +289,51 @@ export default class GiteaV1 implements VssueAPI.Instance {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     query: { page = 1, perPage = 10, sort = 'desc' } = {},
   }: {
-    accessToken: VssueAPI.AccessToken;
-    issueId: string | number;
-    query?: Partial<VssueAPI.Query>;
+    accessToken: VssueAPI.AccessToken
+    issueId: string | number
+    query?: Partial<VssueAPI.Query>
   }): Promise<VssueAPI.Comments> {
     const options: AxiosRequestConfig = {
       params: {
         // to avoid caching
         timestamp: Date.now(),
       },
-    };
+    }
     if (accessToken) {
       options.headers = {
         Authorization: `bearer ${accessToken}`,
-      };
+      }
     }
     const response = await this.$http.get<ResponseComment[]>(
       `repos/${this.owner}/${this.repo}/issues/${issueId}/comments`,
-      options
-    );
-    const commentsRaw = response.data;
+      options,
+    )
+    const commentsRaw = response.data
 
     // gitea api v1 should get html content and reactions by other api
-    const getCommentsMeta: Array<Promise<void>> = [];
+    const getCommentsMeta: Array<Promise<void>> = []
 
     for (const comment of commentsRaw) {
       getCommentsMeta.push(
         (async (): Promise<void> => {
           comment.body_html = await this.getMarkdownContent({
-            accessToken: accessToken,
+            accessToken,
             contentRaw: comment.body,
-          });
-        })()
-      );
+          })
+        })(),
+      )
       getCommentsMeta.push(
         (async (): Promise<void> => {
           comment.reactions = await this.getCommentReactions({
-            accessToken: accessToken,
-            issueId: issueId,
+            accessToken,
+            issueId,
             commentId: comment.id,
-          });
-        })()
-      );
+          })
+        })(),
+      )
     }
 
-    await Promise.all(getCommentsMeta);
+    await Promise.all(getCommentsMeta)
 
     return {
       count: commentsRaw.length,
@@ -340,7 +342,7 @@ export default class GiteaV1 implements VssueAPI.Instance {
       page: 1,
       perPage: 50,
       data: commentsRaw.map(item => normalizeComment(item, this.baseURL)),
-    };
+    }
   }
 
   /**
@@ -353,9 +355,9 @@ export default class GiteaV1 implements VssueAPI.Instance {
     issueId,
     content,
   }: {
-    accessToken: VssueAPI.AccessToken;
-    issueId: string | number;
-    content: string;
+    accessToken: VssueAPI.AccessToken
+    issueId: string | number
+    content: string
   }): Promise<VssueAPI.Comment> {
     const { data } = await this.$http.post<ResponseComment>(
       `repos/${this.owner}/${this.repo}/issues/${issueId}/comments`,
@@ -364,9 +366,9 @@ export default class GiteaV1 implements VssueAPI.Instance {
       },
       {
         headers: { Authorization: `bearer ${accessToken}` },
-      }
-    );
-    return normalizeComment(data, this.baseURL);
+      },
+    )
+    return normalizeComment(data, this.baseURL)
   }
 
   /**
@@ -380,10 +382,10 @@ export default class GiteaV1 implements VssueAPI.Instance {
     commentId,
     content,
   }: {
-    accessToken: VssueAPI.AccessToken;
-    issueId: string | number;
-    commentId: string | number;
-    content: string;
+    accessToken: VssueAPI.AccessToken
+    issueId: string | number
+    commentId: string | number
+    content: string
   }): Promise<VssueAPI.Comment> {
     const { data } = await this.$http.patch<ResponseComment>(
       `repos/${this.owner}/${this.repo}/issues/comments/${commentId}`,
@@ -392,25 +394,25 @@ export default class GiteaV1 implements VssueAPI.Instance {
       },
       {
         headers: { Authorization: `bearer ${accessToken}` },
-      }
-    );
+      },
+    )
 
     const [contentHTML, reactions] = await Promise.all([
       this.getMarkdownContent({
-        accessToken: accessToken,
+        accessToken,
         contentRaw: data.body,
       }),
       this.getCommentReactions({
-        accessToken: accessToken,
-        issueId: issueId,
+        accessToken,
+        issueId,
         commentId: data.id,
       }),
-    ]);
+    ])
 
-    data.body_html = contentHTML;
-    data.reactions = reactions;
+    data.body_html = contentHTML
+    data.reactions = reactions
 
-    return normalizeComment(data, this.baseURL);
+    return normalizeComment(data, this.baseURL)
   }
 
   /**
@@ -422,17 +424,17 @@ export default class GiteaV1 implements VssueAPI.Instance {
     accessToken,
     commentId,
   }: {
-    accessToken: VssueAPI.AccessToken;
-    issueId: string | number;
-    commentId: string | number;
+    accessToken: VssueAPI.AccessToken
+    issueId: string | number
+    commentId: string | number
   }): Promise<boolean> {
     const { status } = await this.$http.delete(
       `repos/${this.owner}/${this.repo}/issues/comments/${commentId}`,
       {
         headers: { Authorization: `bearer ${accessToken}` },
-      }
-    );
-    return status === 204;
+      },
+    )
+    return status === 204
   }
 
   /**
@@ -444,27 +446,27 @@ export default class GiteaV1 implements VssueAPI.Instance {
     accessToken,
     commentId,
   }: {
-    accessToken: VssueAPI.AccessToken;
-    issueId: string | number;
-    commentId: string | number;
+    accessToken: VssueAPI.AccessToken
+    issueId: string | number
+    commentId: string | number
   }): Promise<VssueAPI.Reactions> {
     const options: AxiosRequestConfig = {
       params: {
         // to avoid caching
         timestamp: Date.now(),
       },
-    };
+    }
     if (accessToken) {
       options.headers = {
         Authorization: `bearer ${accessToken}`,
-      };
+      }
     }
     const { data } = await this.$http.get<ResponseReaction[]>(
       `repos/${this.owner}/${this.repo}/issues/comments/${commentId}/reactions`,
-      options
-    );
+      options,
+    )
     // data is possibly be `null`
-    return normalizeReactions(data || []);
+    return normalizeReactions(data || [])
   }
 
   /**
@@ -477,10 +479,10 @@ export default class GiteaV1 implements VssueAPI.Instance {
     reaction,
     accessToken,
   }: {
-    accessToken: VssueAPI.AccessToken;
-    issueId: string | number;
-    commentId: string | number;
-    reaction: keyof VssueAPI.Reactions;
+    accessToken: VssueAPI.AccessToken
+    issueId: string | number
+    commentId: string | number
+    reaction: keyof VssueAPI.Reactions
   }): Promise<boolean> {
     const response = await this.$http.post(
       `repos/${this.owner}/${this.repo}/issues/comments/${commentId}/reactions`,
@@ -489,8 +491,8 @@ export default class GiteaV1 implements VssueAPI.Instance {
       },
       {
         headers: { Authorization: `bearer ${accessToken}` },
-      }
-    );
+      },
+    )
 
     // 200 OK if the reaction is already token
     if (response.status === 200) {
@@ -498,11 +500,11 @@ export default class GiteaV1 implements VssueAPI.Instance {
         accessToken,
         commentId,
         reaction,
-      });
+      })
     }
 
     // 201 CREATED
-    return response.status === 201;
+    return response.status === 201
   }
 
   /**
@@ -515,17 +517,17 @@ export default class GiteaV1 implements VssueAPI.Instance {
     reaction,
     accessToken,
   }: {
-    accessToken: VssueAPI.AccessToken;
-    commentId: string | number;
-    reaction: keyof VssueAPI.Reactions;
+    accessToken: VssueAPI.AccessToken
+    commentId: string | number
+    reaction: keyof VssueAPI.Reactions
   }): Promise<boolean> {
     const response = await this.$http.request({
       url: `repos/${this.owner}/${this.repo}/issues/comments/${commentId}/reactions`,
       method: 'delete',
       data: { content: mapReactionName(reaction) },
       headers: { Authorization: `bearer ${accessToken}` },
-    });
-    return response.status === 200;
+    })
+    return response.status === 200
   }
 
   /**
@@ -536,24 +538,24 @@ export default class GiteaV1 implements VssueAPI.Instance {
   async getLabels({
     accessToken,
   }: {
-    accessToken: VssueAPI.AccessToken;
+    accessToken: VssueAPI.AccessToken
   }): Promise<ResponseLabel[]> {
     const options: AxiosRequestConfig = {
       params: {
         // to avoid caching
         timestamp: Date.now(),
       },
-    };
+    }
     if (accessToken) {
       options.headers = {
         Authorization: `bearer ${accessToken}`,
-      };
+      }
     }
     const { data } = await this.$http.get<ResponseLabel[]>(
       `repos/${this.owner}/${this.repo}/labels`,
-      options
-    );
-    return data || [];
+      options,
+    )
+    return data || []
   }
 
   /**
@@ -567,10 +569,10 @@ export default class GiteaV1 implements VssueAPI.Instance {
     color = '#3eaf7c',
     description,
   }: {
-    accessToken: VssueAPI.AccessToken;
-    label: string;
-    color?: string;
-    description?: string;
+    accessToken: VssueAPI.AccessToken
+    label: string
+    color?: string
+    description?: string
   }): Promise<number> {
     const { data } = await this.$http.post<ResponseLabel>(
       `repos/${this.owner}/${this.repo}/labels`,
@@ -581,9 +583,9 @@ export default class GiteaV1 implements VssueAPI.Instance {
       },
       {
         headers: { Authorization: `bearer ${accessToken}` },
-      }
-    );
-    return data.id;
+      },
+    )
+    return data.id
   }
 
   /**
@@ -595,25 +597,25 @@ export default class GiteaV1 implements VssueAPI.Instance {
     accessToken,
     contentRaw,
   }: {
-    accessToken?: VssueAPI.AccessToken;
-    contentRaw: string;
+    accessToken?: VssueAPI.AccessToken
+    contentRaw: string
   }): Promise<string> {
-    const options: AxiosRequestConfig = {};
+    const options: AxiosRequestConfig = {}
     if (accessToken) {
       options.headers = {
         Authorization: `bearer ${accessToken}`,
-      };
+      }
     }
     const { data } = await this.$http.post<ResponseMarkdown>(
-      `markdown`,
+      'markdown',
       {
         Context: `${this.owner}/${this.repo}`,
         Mode: 'gfm',
         Text: contentRaw,
         Wiki: false,
       },
-      options
-    );
-    return data;
+      options,
+    )
+    return data
   }
 }

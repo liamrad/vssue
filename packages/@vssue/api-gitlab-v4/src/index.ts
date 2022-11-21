@@ -1,6 +1,7 @@
-import { VssueAPI } from 'vssue';
+import type { VssueAPI } from 'vssue'
 
-import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
+import type { AxiosInstance, AxiosRequestConfig } from 'axios'
+import axios from 'axios'
 
 import {
   buildQuery,
@@ -8,23 +9,23 @@ import {
   concatURL,
   getCleanURL,
   parseQuery,
-} from '@vssue/utils';
+} from '@vssue/utils'
 
 import {
-  normalizeUser,
-  normalizeIssue,
-  normalizeComment,
-  normalizeReactions,
   mapReactionName,
-} from './utils';
+  normalizeComment,
+  normalizeIssue,
+  normalizeReactions,
+  normalizeUser,
+} from './utils'
 
-import {
-  ResponseUser,
-  ResponseIssue,
+import type {
   ResponseComment,
-  ResponseReaction,
+  ResponseIssue,
   ResponseMarkdown,
-} from './types';
+  ResponseReaction,
+  ResponseUser,
+} from './types'
 
 /**
  * GitLab API V4
@@ -33,15 +34,15 @@ import {
  * @see https://docs.gitlab.com/ce/api/oauth2.html
  */
 export default class GitlabV4 implements VssueAPI.Instance {
-  baseURL: string;
-  owner: string;
-  repo: string;
-  labels: Array<string>;
-  clientId: string;
-  state: string;
-  $http: AxiosInstance;
+  baseURL: string
+  owner: string
+  repo: string
+  labels: Array<string>
+  clientId: string
+  state: string
+  $http: AxiosInstance
 
-  private _encodedRepo: string;
+  private _encodedRepo: string
 
   constructor({
     baseURL = 'https://gitlab.com',
@@ -51,23 +52,23 @@ export default class GitlabV4 implements VssueAPI.Instance {
     clientId,
     state,
   }: VssueAPI.Options) {
-    this.baseURL = baseURL;
-    this.owner = owner;
-    this.repo = repo;
-    this.labels = labels;
+    this.baseURL = baseURL
+    this.owner = owner
+    this.repo = repo
+    this.labels = labels
 
-    this.clientId = clientId;
-    this.state = state;
+    this.clientId = clientId
+    this.state = state
 
     // @see https://docs.gitlab.com/ce/api/README.html#namespaced-path-encoding
-    this._encodedRepo = encodeURIComponent(`${this.owner}/${this.repo}`);
+    this._encodedRepo = encodeURIComponent(`${this.owner}/${this.repo}`)
 
     this.$http = axios.create({
       baseURL: concatURL(baseURL, 'api/v4'),
       headers: {
         Accept: 'application/json',
       },
-    });
+    })
   }
 
   /**
@@ -82,7 +83,7 @@ export default class GitlabV4 implements VssueAPI.Instance {
         reactable: true,
         sortable: true,
       },
-    };
+    }
   }
 
   /**
@@ -98,8 +99,8 @@ export default class GitlabV4 implements VssueAPI.Instance {
         redirect_uri: window.location.href,
         response_type: 'token',
         state: this.state,
-      }
-    );
+      },
+    )
   }
 
   /**
@@ -111,22 +112,22 @@ export default class GitlabV4 implements VssueAPI.Instance {
    * If the `access_token` and `state` exist in the query, and the `state` matches, remove them from query, and return the access token.
    */
   async handleAuth(): Promise<VssueAPI.AccessToken> {
-    const hash = parseQuery(window.location.hash.slice(1));
-    if (!hash.access_token || hash.state !== this.state) {
-      return null;
-    }
-    const accessToken = hash.access_token;
-    delete hash.access_token;
-    delete hash.token_type;
-    delete hash.expires_in;
-    delete hash.state;
-    const hashString = buildQuery(hash);
-    const newHash = hashString ? `#${hashString}` : '';
+    const hash = parseQuery(window.location.hash.slice(1))
+    if (!hash.access_token || hash.state !== this.state)
+      return null
+
+    const accessToken = hash.access_token
+    delete hash.access_token
+    delete hash.token_type
+    delete hash.expires_in
+    delete hash.state
+    const hashString = buildQuery(hash)
+    const newHash = hashString ? `#${hashString}` : ''
     const replaceURL = `${getCleanURL(window.location.href)}${
       window.location.search
-    }${newHash}`;
-    window.history.replaceState(null, '', replaceURL);
-    return accessToken;
+    }${newHash}`
+    window.history.replaceState(null, '', replaceURL)
+    return accessToken
   }
 
   /**
@@ -135,12 +136,12 @@ export default class GitlabV4 implements VssueAPI.Instance {
   async getUser({
     accessToken,
   }: {
-    accessToken: VssueAPI.AccessToken;
+    accessToken: VssueAPI.AccessToken
   }): Promise<VssueAPI.User> {
     const { data } = await this.$http.get<ResponseUser>('user', {
       headers: { Authorization: `Bearer ${accessToken}` },
-    });
-    return normalizeUser(data);
+    })
+    return normalizeUser(data)
   }
 
   /**
@@ -156,47 +157,48 @@ export default class GitlabV4 implements VssueAPI.Instance {
     issueId,
     issueTitle,
   }: {
-    accessToken: VssueAPI.AccessToken;
-    issueId?: string | number;
-    issueTitle?: string;
+    accessToken: VssueAPI.AccessToken
+    issueId?: string | number
+    issueTitle?: string
   }): Promise<VssueAPI.Issue | null> {
-    const options: AxiosRequestConfig = {};
+    const options: AxiosRequestConfig = {}
 
     if (accessToken) {
       options.headers = {
         Authorization: `Bearer ${accessToken}`,
-      };
+      }
     }
 
     if (issueId) {
       try {
         const { data } = await this.$http.get<ResponseIssue>(
           `projects/${this._encodedRepo}/issues/${issueId}`,
-          options
-        );
-        return normalizeIssue(data);
-      } catch (e) {
-        if (e.response && e.response.status === 404) {
-          return null;
-        } else {
-          throw e;
-        }
+          options,
+        )
+        return normalizeIssue(data)
       }
-    } else {
+      catch (e: any) {
+        if (e.response && e.response.status === 404)
+          return null
+        else
+          throw e
+      }
+    }
+    else {
       options.params = {
         labels: this.labels.join(','),
         order_by: 'created_at',
         sort: 'asc',
         search: issueTitle,
-      };
+      }
       const { data } = await this.$http.get<ResponseIssue[]>(
         `projects/${this._encodedRepo}/issues`,
-        options
-      );
+        options,
+      )
       const issue = data
         .map(normalizeIssue)
-        .find(item => item.title === issueTitle);
-      return issue || null;
+        .find(item => item.title === issueTitle)
+      return issue || null
     }
   }
 
@@ -210,9 +212,9 @@ export default class GitlabV4 implements VssueAPI.Instance {
     title,
     content,
   }: {
-    accessToken: VssueAPI.AccessToken;
-    title: string;
-    content: string;
+    accessToken: VssueAPI.AccessToken
+    title: string
+    content: string
   }): Promise<VssueAPI.Issue> {
     const { data } = await this.$http.post<ResponseIssue>(
       `projects/${this._encodedRepo}/issues`,
@@ -223,9 +225,9 @@ export default class GitlabV4 implements VssueAPI.Instance {
       },
       {
         headers: { Authorization: `Bearer ${accessToken}` },
-      }
-    );
-    return normalizeIssue(data);
+      },
+    )
+    return normalizeIssue(data)
   }
 
   /**
@@ -243,62 +245,62 @@ export default class GitlabV4 implements VssueAPI.Instance {
     issueId,
     query: { page = 1, perPage = 10, sort = 'desc' } = {},
   }: {
-    accessToken: VssueAPI.AccessToken;
-    issueId: string | number;
-    query?: Partial<VssueAPI.Query>;
+    accessToken: VssueAPI.AccessToken
+    issueId: string | number
+    query?: Partial<VssueAPI.Query>
   }): Promise<VssueAPI.Comments> {
     const options: AxiosRequestConfig = {
       params: {
         // pagination
-        page: page,
+        page,
         per_page: perPage,
         order_by: 'created_at',
-        sort: sort,
+        sort,
       },
-    };
+    }
     if (accessToken) {
       options.headers = {
         Authorization: `Bearer ${accessToken}`,
-      };
+      }
     }
     const response = await this.$http.get<ResponseComment[]>(
       `projects/${this._encodedRepo}/issues/${issueId}/notes`,
-      options
-    );
-    const commentsRaw = response.data;
+      options,
+    )
+    const commentsRaw = response.data
 
     // gitlab api v4 should get parsed markdown content and reactions by other api
     // this is potentially to cause 429 Too Many Requests
-    const getCommentsMeta: Array<Promise<void>> = [];
+    const getCommentsMeta: Array<Promise<void>> = []
 
     for (const comment of commentsRaw) {
       getCommentsMeta.push(
         (async (): Promise<void> => {
           comment.body_html = await this.getMarkdownContent({
-            accessToken: accessToken,
+            accessToken,
             contentRaw: comment.body,
-          });
-        })()
-      );
+          })
+        })(),
+      )
       getCommentsMeta.push(
         (async (): Promise<void> => {
           comment.reactions = await this.getCommentReactions({
-            accessToken: accessToken,
-            issueId: issueId,
+            accessToken,
+            issueId,
             commentId: comment.id,
-          });
-        })()
-      );
+          })
+        })(),
+      )
     }
 
-    await Promise.all(getCommentsMeta);
+    await Promise.all(getCommentsMeta)
 
     return {
       count: Number(response.headers['x-total']),
       page: Number(response.headers['x-page']),
       perPage: Number(response.headers['x-per-page']),
       data: commentsRaw.map(normalizeComment),
-    };
+    }
   }
 
   /**
@@ -311,9 +313,9 @@ export default class GitlabV4 implements VssueAPI.Instance {
     issueId,
     content,
   }: {
-    accessToken: VssueAPI.AccessToken;
-    issueId: string | number;
-    content: string;
+    accessToken: VssueAPI.AccessToken
+    issueId: string | number
+    content: string
   }): Promise<VssueAPI.Comment> {
     const { data } = await this.$http.post<ResponseComment>(
       `projects/${this._encodedRepo}/issues/${issueId}/notes`,
@@ -322,9 +324,9 @@ export default class GitlabV4 implements VssueAPI.Instance {
       },
       {
         headers: { Authorization: `Bearer ${accessToken}` },
-      }
-    );
-    return normalizeComment(data);
+      },
+    )
+    return normalizeComment(data)
   }
 
   /**
@@ -338,10 +340,10 @@ export default class GitlabV4 implements VssueAPI.Instance {
     commentId,
     content,
   }: {
-    accessToken: VssueAPI.AccessToken;
-    issueId: string | number;
-    commentId: string | number;
-    content: string;
+    accessToken: VssueAPI.AccessToken
+    issueId: string | number
+    commentId: string | number
+    content: string
   }): Promise<VssueAPI.Comment> {
     const { data } = await this.$http.put<ResponseComment>(
       `projects/${this._encodedRepo}/issues/${issueId}/notes/${commentId}`,
@@ -350,25 +352,25 @@ export default class GitlabV4 implements VssueAPI.Instance {
       },
       {
         headers: { Authorization: `Bearer ${accessToken}` },
-      }
-    );
+      },
+    )
 
     const [contentHTML, reactions] = await Promise.all([
       this.getMarkdownContent({
-        accessToken: accessToken,
+        accessToken,
         contentRaw: data.body,
       }),
       this.getCommentReactions({
-        accessToken: accessToken,
-        issueId: issueId,
+        accessToken,
+        issueId,
         commentId: data.id,
       }),
-    ]);
+    ])
 
-    data.body_html = contentHTML;
-    data.reactions = reactions;
+    data.body_html = contentHTML
+    data.reactions = reactions
 
-    return normalizeComment(data);
+    return normalizeComment(data)
   }
 
   /**
@@ -381,17 +383,17 @@ export default class GitlabV4 implements VssueAPI.Instance {
     issueId,
     commentId,
   }: {
-    accessToken: VssueAPI.AccessToken;
-    issueId: string | number;
-    commentId: string | number;
+    accessToken: VssueAPI.AccessToken
+    issueId: string | number
+    commentId: string | number
   }): Promise<boolean> {
     const { status } = await this.$http.delete(
       `projects/${this._encodedRepo}/issues/${issueId}/notes/${commentId}`,
       {
         headers: { Authorization: `Bearer ${accessToken}` },
-      }
-    );
-    return status === 204;
+      },
+    )
+    return status === 204
   }
 
   /**
@@ -404,17 +406,17 @@ export default class GitlabV4 implements VssueAPI.Instance {
     issueId,
     commentId,
   }: {
-    accessToken: VssueAPI.AccessToken;
-    issueId: string | number;
-    commentId: string | number;
+    accessToken: VssueAPI.AccessToken
+    issueId: string | number
+    commentId: string | number
   }): Promise<VssueAPI.Reactions> {
     const { data } = await this.$http.get<ResponseReaction[]>(
       `projects/${this._encodedRepo}/issues/${issueId}/notes/${commentId}/award_emoji`,
       {
         headers: { Authorization: `Bearer ${accessToken}` },
-      }
-    );
-    return normalizeReactions(data);
+      },
+    )
+    return normalizeReactions(data)
   }
 
   /**
@@ -428,10 +430,10 @@ export default class GitlabV4 implements VssueAPI.Instance {
     reaction,
     accessToken,
   }: {
-    accessToken: VssueAPI.AccessToken;
-    issueId: string | number;
-    commentId: string | number;
-    reaction: keyof VssueAPI.Reactions;
+    accessToken: VssueAPI.AccessToken
+    issueId: string | number
+    commentId: string | number
+    reaction: keyof VssueAPI.Reactions
   }): Promise<boolean> {
     try {
       const response = await this.$http.post(
@@ -443,19 +445,19 @@ export default class GitlabV4 implements VssueAPI.Instance {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
-        }
-      );
-      return response.status === 201;
-    } catch (e) {
+        },
+      )
+      return response.status === 201
+    }
+    catch (e: any) {
       // it could be a bug of gitlab
       // if a reaction (award emoji) has already existed, it returns a 404 response with a buggy message
       // have submitted an issue: https://gitlab.com/gitlab-org/gitlab-ce/issues/56147
       /* istanbul ignore next */
-      if (e.response && e.response.status === 404) {
-        return false;
-      } else {
-        throw e;
-      }
+      if (e.response && e.response.status === 404)
+        return false
+      else
+        throw e
     }
   }
 
@@ -468,23 +470,23 @@ export default class GitlabV4 implements VssueAPI.Instance {
     accessToken,
     contentRaw,
   }: {
-    accessToken?: string | null;
-    contentRaw: string;
+    accessToken?: string | null
+    contentRaw: string
   }): Promise<string> {
-    const options: AxiosRequestConfig = {};
+    const options: AxiosRequestConfig = {}
     if (accessToken) {
       options.headers = {
         Authorization: `Bearer ${accessToken}`,
-      };
+      }
     }
     const { data } = await this.$http.post<ResponseMarkdown>(
-      `markdown`,
+      'markdown',
       {
         text: contentRaw,
         gfm: true,
       },
-      options
-    );
-    return data.html;
+      options,
+    )
+    return data.html
   }
 }

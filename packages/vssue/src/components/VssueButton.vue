@@ -1,5 +1,5 @@
 <script lang="ts">
-import Vue from 'vue';
+import Vue from 'vue'
 
 export default Vue.extend({
   name: 'VssueIcon',
@@ -21,8 +21,8 @@ export default Vue.extend({
         ...data,
         class: ['vssue-button', `vssue-button-${props.type}`],
       },
-      children
-    );
+      children,
+    )
   },
-});
+})
 </script>

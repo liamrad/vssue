@@ -1,3 +1,60 @@
+<script lang="ts">
+import { Component, Inject, Vue } from 'vue-property-decorator'
+import type { Vssue } from 'vssue'
+import VssueIcon from './VssueIcon.vue'
+
+@Component({
+  components: {
+    VssueIcon,
+  },
+})
+export default class VssuePagination extends Vue {
+  @Inject() vssue!: Vssue.Store
+
+  get disabled(): boolean {
+    return this.vssue.isPending
+  }
+
+  get pageCount(): number {
+    const pageCount = Math.ceil(
+      this.vssue.comments!.count / this.vssue.comments!.perPage,
+    )
+    return pageCount > 1 ? pageCount : 1
+  }
+
+  get perPageOptions(): Array<number> {
+    const perPageOptions: Array<number> = [5, 10, 20, 50]
+    if (
+      !perPageOptions.includes(this.vssue.options!.perPage)
+      && this.vssue.options!.perPage < 100
+    )
+      perPageOptions.push(this.vssue.options!.perPage)
+
+    return perPageOptions.sort((a, b) => a - b)
+  }
+
+  get page(): number {
+    return this.vssue.query.page > this.pageCount
+      ? this.pageCount
+      : this.vssue.query.page
+  }
+
+  set page(val: number) {
+    if (val > 0 && val <= this.pageCount)
+      this.vssue.query.page = val
+  }
+
+  get perPage(): number {
+    return this.vssue.query.perPage
+  }
+
+  set perPage(val: number) {
+    if (this.perPageOptions.includes(val))
+      this.vssue.query.perPage = val
+  }
+}
+</script>
+
 <template>
   <div class="vssue-pagination">
     <div class="vssue-pagination-per-page">
@@ -19,9 +76,8 @@
 
       <span
         v-if="vssue.API.platform.meta.sortable"
-        :class="{
-          'vssue-pagination-link': true,
-          disabled: disabled,
+        class="vssue-pagination-link" :class="{
+          disabled,
         }"
         :title="vssue.$t('sort')"
         @click="vssue.query.sort = vssue.query.sort === 'asc' ? 'desc' : 'asc'"
@@ -32,8 +88,7 @@
 
     <div class="vssue-pagination-page">
       <span
-        :class="{
-          'vssue-pagination-link': true,
+        class="vssue-pagination-link" :class="{
           disabled: page === 1 || disabled,
         }"
         :title="vssue.$t('prev')"
@@ -63,8 +118,7 @@
       </label>
 
       <span
-        :class="{
-          'vssue-pagination-link': true,
+        class="vssue-pagination-link" :class="{
           disabled: page === pageCount || disabled,
         }"
         :title="vssue.$t('next')"
@@ -74,62 +128,3 @@
     </div>
   </div>
 </template>
-
-<script lang="ts">
-import { Vue, Component, Inject } from 'vue-property-decorator';
-import { Vssue } from 'vssue';
-import VssueIcon from './VssueIcon.vue';
-
-@Component({
-  components: {
-    VssueIcon,
-  },
-})
-export default class VssuePagination extends Vue {
-  @Inject() vssue!: Vssue.Store;
-
-  get disabled(): boolean {
-    return this.vssue.isPending;
-  }
-
-  get pageCount(): number {
-    const pageCount = Math.ceil(
-      this.vssue.comments!.count / this.vssue.comments!.perPage
-    );
-    return pageCount > 1 ? pageCount : 1;
-  }
-
-  get perPageOptions(): Array<number> {
-    const perPageOptions: Array<number> = [5, 10, 20, 50];
-    if (
-      !perPageOptions.includes(this.vssue.options!.perPage) &&
-      this.vssue.options!.perPage < 100
-    ) {
-      perPageOptions.push(this.vssue.options!.perPage);
-    }
-    return perPageOptions.sort((a, b) => a - b);
-  }
-
-  get page(): number {
-    return this.vssue.query.page > this.pageCount
-      ? this.pageCount
-      : this.vssue.query.page;
-  }
-
-  set page(val: number) {
-    if (val > 0 && val <= this.pageCount) {
-      this.vssue.query.page = val;
-    }
-  }
-
-  get perPage(): number {
-    return this.vssue.query.perPage;
-  }
-
-  set perPage(val: number) {
-    if (this.perPageOptions.includes(val)) {
-      this.vssue.query.perPage = val;
-    }
-  }
-}
-</script>

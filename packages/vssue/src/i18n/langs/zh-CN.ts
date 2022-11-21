@@ -1,4 +1,4 @@
-import VueI18n from 'vue-i18n';
+import type VueI18n from 'vue-i18n'
 
 const messages: VueI18n.LocaleMessageObject = {
   // auth
@@ -44,9 +44,9 @@ const messages: VueI18n.LocaleMessageObject = {
   noComments: '还没有评论，来发表第一条评论吧！',
 
   // alerts
-  reactionGiven: `已经添加过 '{reaction}' 了`,
+  reactionGiven: '已经添加过 \'{reaction}\' 了',
   deleteConfirm: '确认要删除该评论吗？',
   deleteFailed: '评论删除失败',
-};
+}
 
-export default messages;
+export default messages

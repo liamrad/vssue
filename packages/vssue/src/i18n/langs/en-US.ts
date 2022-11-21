@@ -1,4 +1,4 @@
-import VueI18n from 'vue-i18n';
+import type VueI18n from 'vue-i18n'
 
 const messages: VueI18n.LocaleMessageObject = {
   // auth
@@ -46,9 +46,9 @@ const messages: VueI18n.LocaleMessageObject = {
   noComments: 'No comments yet. Leave the first comment !',
 
   // alerts
-  reactionGiven: `Already given '{reaction}' reaction`,
+  reactionGiven: 'Already given \'{reaction}\' reaction',
   deleteConfirm: 'Confirm to delete this comment ?',
   deleteFailed: 'Failed to delete comment',
-};
+}
 
-export default messages;
+export default messages

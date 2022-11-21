@@ -1,4 +1,4 @@
-import VueI18n from 'vue-i18n';
+import type VueI18n from 'vue-i18n'
 
 const messages: VueI18n.LocaleMessageObject = {
   // auth
@@ -9,7 +9,7 @@ const messages: VueI18n.LocaleMessageObject = {
   // comment input
   loading: 'Chargement',
   submit: 'Poster',
-  submitting: "En cours d'envoi",
+  submitting: 'En cours d\'envoi',
   submitComment: 'Ajouter un commentaire',
   cancel: 'Annuler',
   edit: 'Éditer',
@@ -24,7 +24,7 @@ const messages: VueI18n.LocaleMessageObject = {
 
   // pagination
   perPage: 'Commentaires par pages',
-  sort: "Cliquez pour changer l'ordre de tri",
+  sort: 'Cliquez pour changer l\'ordre de tri',
   page: 'Page',
   prev: 'Page précédente',
   next: 'Page suivante',
@@ -45,12 +45,12 @@ const messages: VueI18n.LocaleMessageObject = {
   loadingComments: 'Chargment des commentaires...',
   loginRequired: 'Se connecter pour voir les commentaires',
   noComments:
-    "Il n'y a pas de commentaire pour le moment. Laissez le premier commentaire !",
+    'Il n\'y a pas de commentaire pour le moment. Laissez le premier commentaire !',
 
   // alerts
-  reactionGiven: `Réaction '{reaction}' déjà donnée`,
+  reactionGiven: 'Réaction \'{reaction}\' déjà donnée',
   deleteConfirm: 'Voulez-vous vraiment supprimer ce commentaire?',
   deleteFailed: 'Impossible de créer le commentaire',
-};
+}
 
-export default messages;
+export default messages

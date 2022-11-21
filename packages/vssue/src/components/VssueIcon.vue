@@ -1,5 +1,5 @@
 <script lang="ts">
-import Vue from 'vue';
+import Vue from 'vue'
 
 export default Vue.extend({
   name: 'VssueIcon',
@@ -36,8 +36,8 @@ export default Vue.extend({
             'xlink:href': `#vssue-icon-${props.name}`,
           },
         }),
-      ]
-    );
+      ],
+    )
   },
-});
+})
 </script>

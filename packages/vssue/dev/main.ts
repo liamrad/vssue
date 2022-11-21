@@ -1,13 +1,13 @@
-import Vue from 'vue';
-import VssuePlugin, { Vssue, VssueComponent } from 'vssue';
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-// @ts-ignore
-import PlatformAPI from '@vssue/api';
+import Vue from 'vue'
+import type { Vssue } from 'vssue'
+import VssuePlugin, { VssueComponent } from 'vssue'
+// @ts-expect-error ~/vue.config.js chainWebpack alias
+import PlatformAPI from '@vssue/api'
 
-import 'vssue/dist/vssue.css';
-import 'github-markdown-css';
+import 'vssue/dist/vssue.css'
+import 'github-markdown-css'
 
-const onlyComponent: boolean = process.env.VUE_APP_ONLY_COMPONENT === 'true';
+const onlyComponent: boolean = process.env.VUE_APP_ONLY_COMPONENT === 'true'
 
 const options: Partial<Vssue.Options> = {
   api: PlatformAPI,
@@ -23,19 +23,18 @@ const options: Partial<Vssue.Options> = {
   proxy: url => `https://cors-anywhere.azm.workers.dev/${url}`,
   issueContent: ({ url }) => url,
   autoCreateIssue: false,
-};
-
-if (!onlyComponent) {
-  Vue.use(VssuePlugin, options);
-} else {
-  Vue.component('Vssue', VssueComponent);
 }
+
+if (!onlyComponent)
+  Vue.use(VssuePlugin, options)
+
+else
+  Vue.component('Vssue', VssueComponent)
 
 /* eslint-disable-next-line no-new */
 new Vue({
   el: '#app',
 
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   data() {
     return {
       title: 'Vssue Dev',
@@ -49,9 +48,9 @@ new Vue({
             // issueContent: ({ url }) => `This issue is created by Vssue to store comments of page: ${url}`,
             // issueContent: async ({ url }) => await Promise.resolve(`This issue is created by Vssue to store comments of page: ${url}`),
           },
-    };
+    }
   },
 
   template: '<Vssue :issue-id="issueId" :options="options" />',
   // template: '<Vssue :title="title" :options="options" />',
-});
+})

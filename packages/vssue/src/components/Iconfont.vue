@@ -1,4 +1,12 @@
-<template functional>
+<script lang="ts">
+import Vue from 'vue'
+
+export default Vue.extend({
+  name: 'Iconfont',
+})
+</script>
+
+<template>
   <svg v-show="false">
     <symbol id="vssue-icon-bitbucket" viewBox="0 0 1024 1024">
       <path
@@ -86,11 +94,3 @@
     </symbol>
   </svg>
 </template>
-
-<script lang="ts">
-import Vue from 'vue';
-
-export default Vue.extend({
-  name: 'Iconfont',
-});
-</script>

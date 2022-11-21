@@ -1,5 +1,5 @@
 <script lang="ts">
-import Vue from 'vue';
+import Vue from 'vue'
 
 export default Vue.extend({
   name: 'TransitionFade',
@@ -31,8 +31,8 @@ export default Vue.extend({
           tag: props.tag,
         },
       },
-      children
-    );
+      children,
+    )
   },
-});
+})
 </script>

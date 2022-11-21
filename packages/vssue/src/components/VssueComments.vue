@@ -1,3 +1,22 @@
+<script lang="ts">
+import { Component, Inject, Vue } from 'vue-property-decorator'
+import type { Vssue } from 'vssue'
+import TransitionFade from './TransitionFade.vue'
+import VssueComment from './VssueComment.vue'
+import VssuePagination from './VssuePagination.vue'
+
+@Component({
+  components: {
+    TransitionFade,
+    VssueComment,
+    VssuePagination,
+  },
+})
+export default class VssueComments extends Vue {
+  @Inject() vssue!: Vssue.Store
+}
+</script>
+
 <template>
   <div class="vssue-comments">
     <!-- pagination top -->
@@ -16,22 +35,3 @@
     <VssuePagination v-show="vssue.comments.data.length > 5" />
   </div>
 </template>
-
-<script lang="ts">
-import { Vue, Component, Inject } from 'vue-property-decorator';
-import { Vssue } from 'vssue';
-import TransitionFade from './TransitionFade.vue';
-import VssueComment from './VssueComment.vue';
-import VssuePagination from './VssuePagination.vue';
-
-@Component({
-  components: {
-    TransitionFade,
-    VssueComment,
-    VssuePagination,
-  },
-})
-export default class VssueComments extends Vue {
-  @Inject() vssue!: Vssue.Store;
-}
-</script>

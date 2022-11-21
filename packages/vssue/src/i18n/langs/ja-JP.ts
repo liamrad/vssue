@@ -1,4 +1,4 @@
-import VueI18n from 'vue-i18n';
+import type VueI18n from 'vue-i18n'
 
 const messages: VueI18n.LocaleMessageObject = {
   // auth
@@ -47,9 +47,9 @@ const messages: VueI18n.LocaleMessageObject = {
   noComments: 'まだコメントがありません。最初のコメントを残しましょう！',
 
   // alerts
-  reactionGiven: `既に '{reaction}' のリアクションをしています`,
+  reactionGiven: '既に \'{reaction}\' のリアクションをしています',
   deleteConfirm: '本当にコメントを削除してもいいですか？',
   deleteFailed: 'コメントの削除に失敗しました',
-};
+}
 
-export default messages;
+export default messages

@@ -1,18 +1,18 @@
-const replace = require('@rollup/plugin-replace');
-const resolve = require('@rollup/plugin-node-resolve');
-const commonjs = require('@rollup/plugin-commonjs');
-const json = require('@rollup/plugin-json');
-const vue = require('rollup-plugin-vue');
-const typescript = require('@rollup/plugin-typescript');
-const babel = require('rollup-plugin-babel');
-const { terser } = require('rollup-plugin-terser');
+const replace = require('@rollup/plugin-replace')
+const resolve = require('@rollup/plugin-node-resolve')
+const commonjs = require('@rollup/plugin-commonjs')
+const json = require('@rollup/plugin-json')
+const vue = require('rollup-plugin-vue')
+const typescript = require('@rollup/plugin-typescript')
+const babel = require('rollup-plugin-babel')
+const { terser } = require('rollup-plugin-terser')
 
 const {
   pkg: { version },
   pathSrc,
   pathDist,
   banner,
-} = require('./util');
+} = require('./util')
 
 const browserEntries = [
   'vssue.bitbucket',
@@ -21,7 +21,7 @@ const browserEntries = [
   'vssue.github',
   'vssue.github-v4',
   'vssue.gitlab',
-];
+]
 
 module.exports = [
   // Browser iife
@@ -42,9 +42,9 @@ module.exports = [
     output: 'vssue.js',
     format: 'es',
   },
-].map(opts => {
-  const minify = Boolean(/min\.js$/.test(opts.output));
-  const polyfill = Boolean(/polyfill\.min\.js$/.test(opts.output));
+].map((opts) => {
+  const minify = Boolean(/min\.js$/.test(opts.output))
+  const polyfill = Boolean(/polyfill\.min\.js$/.test(opts.output))
 
   const config = {
     input: pathSrc(opts.input),
@@ -82,8 +82,8 @@ module.exports = [
         Object.assign(
           {},
           require('../../../tsconfig.base.json').compilerOptions,
-          require('../tsconfig.json').compilerOptions
-        )
+          require('../tsconfig.json').compilerOptions,
+        ),
       ),
       vue(),
       ...(opts.format !== 'es' && polyfill
@@ -107,6 +107,6 @@ module.exports = [
           ]
         : []),
     ],
-  };
-  return config;
-});
+  }
+  return config
+})

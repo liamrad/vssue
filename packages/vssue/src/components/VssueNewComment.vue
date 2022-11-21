@@ -1,3 +1,77 @@
+<script lang="ts">
+import { Component, Inject, Vue } from 'vue-property-decorator'
+import type { Vssue, VssueAPI } from 'vssue'
+import VssueButton from './VssueButton.vue'
+import VssueIcon from './VssueIcon.vue'
+
+@Component({
+  components: {
+    VssueButton,
+    VssueIcon,
+  },
+})
+export default class VssueNewComment extends Vue {
+  @Inject() vssue!: Vssue.Store
+
+  content = ''
+
+  get user(): VssueAPI.User | null {
+    return this.vssue.user
+  }
+
+  get platform(): string | null {
+    return this.vssue.API && this.vssue.API.platform.name
+  }
+
+  get isInputDisabled(): boolean {
+    return this.loading || this.user === null || this.vssue.issue === null
+  }
+
+  get isSubmitDisabled(): boolean {
+    return (
+      this.content === '' || this.vssue.isPending || this.vssue.issue === null
+    )
+  }
+
+  get loading(): boolean {
+    return this.vssue.isCreatingComment
+  }
+
+  get contentRows(): number {
+    return this.content.split('\n').length - 1
+  }
+
+  get inputRows(): number {
+    return this.contentRows < 3 ? 5 : this.contentRows + 2
+  }
+
+  created(): void {
+    this.vssue.$on('reply-comment', (comment) => {
+      const quotedComment = comment.contentRaw.replace(/\n/g, '\n> ')
+      const replyContent = `@${comment.author.username}\n\n> ${quotedComment}\n\n`
+      this.content = this.content.concat(replyContent)
+      this.focus()
+    })
+  }
+
+  beforeDestroy(): void {
+    this.vssue.$off('reply-comment')
+  }
+
+  focus(): void {
+    ((this.$refs.input as unknown) as HTMLInputElement).focus()
+  }
+
+  async submit(): Promise<void> {
+    if (this.isSubmitDisabled)
+      return
+    await this.vssue.postComment({ content: this.content })
+    this.content = ''
+    await this.vssue.getComments()
+  }
+}
+</script>
+
 <template>
   <div class="vssue-new-comment">
     <div class="vssue-comment-avatar">
@@ -8,7 +82,7 @@
         target="_blank"
         rel="noopener noreferrer"
       >
-        <img :src="user.avatar" :alt="user.username" />
+        <img :src="user.avatar" :alt="user.username">
       </a>
 
       <VssueIcon
@@ -75,76 +149,3 @@
     <!-- .vssue-new-comment-footer -->
   </div>
 </template>
-
-<script lang="ts">
-import { Vue, Component, Inject } from 'vue-property-decorator';
-import { VssueAPI, Vssue } from 'vssue';
-import VssueButton from './VssueButton.vue';
-import VssueIcon from './VssueIcon.vue';
-
-@Component({
-  components: {
-    VssueButton,
-    VssueIcon,
-  },
-})
-export default class VssueNewComment extends Vue {
-  @Inject() vssue!: Vssue.Store;
-
-  content = '';
-
-  get user(): VssueAPI.User | null {
-    return this.vssue.user;
-  }
-
-  get platform(): string | null {
-    return this.vssue.API && this.vssue.API.platform.name;
-  }
-
-  get isInputDisabled(): boolean {
-    return this.loading || this.user === null || this.vssue.issue === null;
-  }
-
-  get isSubmitDisabled(): boolean {
-    return (
-      this.content === '' || this.vssue.isPending || this.vssue.issue === null
-    );
-  }
-
-  get loading(): boolean {
-    return this.vssue.isCreatingComment;
-  }
-
-  get contentRows(): number {
-    return this.content.split('\n').length - 1;
-  }
-
-  get inputRows(): number {
-    return this.contentRows < 3 ? 5 : this.contentRows + 2;
-  }
-
-  created(): void {
-    this.vssue.$on('reply-comment', comment => {
-      const quotedComment = comment.contentRaw.replace(/\n/g, '\n> ');
-      const replyContent = `@${comment.author.username}\n\n> ${quotedComment}\n\n`;
-      this.content = this.content.concat(replyContent);
-      this.focus();
-    });
-  }
-
-  beforeDestroy(): void {
-    this.vssue.$off('reply-comment');
-  }
-
-  focus(): void {
-    ((this.$refs.input as unknown) as HTMLInputElement).focus();
-  }
-
-  async submit(): Promise<void> {
-    if (this.isSubmitDisabled) return;
-    await this.vssue.postComment({ content: this.content });
-    this.content = '';
-    await this.vssue.getComments();
-  }
-}
-</script>

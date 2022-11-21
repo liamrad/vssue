@@ -1,3 +1,13 @@
+<script lang="ts">
+import { Component, Inject, Vue } from 'vue-property-decorator'
+import type { Vssue } from 'vssue'
+
+@Component
+export default class VssueHeader extends Vue {
+  @Inject() vssue!: Vssue.Store
+}
+</script>
+
 <template>
   <div class="vssue-header">
     <!-- comments-count - link to issue -->
@@ -11,8 +21,8 @@
         {{
           vssue.comments
             ? vssue.$tc('comments', vssue.comments.count, {
-                count: vssue.comments.count,
-              })
+              count: vssue.comments.count,
+            })
             : vssue.$tc('comments', 0)
         }}
       </span>
@@ -48,13 +58,3 @@
     </span>
   </div>
 </template>
-
-<script lang="ts">
-import { Vue, Component, Inject } from 'vue-property-decorator';
-import { Vssue } from 'vssue';
-
-@Component
-export default class VssueHeader extends Vue {
-  @Inject() vssue!: Vssue.Store;
-}
-</script>

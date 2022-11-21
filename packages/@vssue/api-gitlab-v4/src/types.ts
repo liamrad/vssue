@@ -1,31 +1,31 @@
 export interface ResponseUser {
-  username: string;
-  name: string;
-  avatar_url: string;
-  web_url: string;
+  username: string
+  name: string
+  avatar_url: string
+  web_url: string
 }
 
 export interface ResponseIssue {
-  iid: number;
-  title: string;
-  description: string;
-  web_url: string;
+  iid: number
+  title: string
+  description: string
+  web_url: string
 }
 
 export interface ResponseComment {
-  id: number;
-  author: ResponseUser;
-  body: string;
-  body_html?: string;
-  created_at: string;
-  updated_at: string;
-  reactions?: unknown;
+  id: number
+  author: ResponseUser
+  body: string
+  body_html?: string
+  created_at: string
+  updated_at: string
+  reactions?: unknown
 }
 
 export interface ResponseReaction {
-  name: 'thumbsup' | 'thumbsdown' | 'heart' | string;
+  name: 'thumbsup' | 'thumbsdown' | 'heart' | string
 }
 
 export interface ResponseMarkdown {
-  html: string;
+  html: string
 }

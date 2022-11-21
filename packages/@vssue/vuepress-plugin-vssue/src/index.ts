@@ -1,33 +1,34 @@
-import { Plugin } from 'vuepress-types';
+import type { Plugin } from 'vuepress-types'
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const path = require('path');
+const path = require('path')
 
 module.exports = ({ platform = 'github', ...options }): Plugin => {
   const platformAPI = {
-    github: '@vssue/api-github-v3',
+    'github': '@vssue/api-github-v3',
     'github-v4': '@vssue/api-github-v4',
-    gitlab: '@vssue/api-gitlab-v4',
-    bitbucket: '@vssue/api-bitbucket-v2',
-    gitee: '@vssue/api-gitee-v5',
-  };
+    'gitlab': '@vssue/api-gitlab-v4',
+    'bitbucket': '@vssue/api-bitbucket-v2',
+    'gitee': '@vssue/api-gitee-v5',
+  }
 
-  const apiPkg = platformAPI[platform];
+  const apiPkg = platformAPI[platform]
 
   if (!apiPkg) {
     throw new Error(
       `[@vssue/vuepress-plugin-vssue] Platform '${platform}' is not supported. Available platforms: ${Object.keys(
-        platformAPI
-      ).join(', ')}.`
-    );
+        platformAPI,
+      ).join(', ')}.`,
+    )
   }
 
   try {
-    require.resolve(apiPkg);
-  } catch (e) {
+    require.resolve(apiPkg)
+  }
+  catch (e) {
     throw new Error(
-      `[@vssue/vuepress-plugin-vssue] ${apiPkg} is not installed. Run 'npm install ${apiPkg}' or 'yarn add ${apiPkg}' to install it.`
-    );
+      `[@vssue/vuepress-plugin-vssue] ${apiPkg} is not installed. Run 'npm install ${apiPkg}' or 'yarn add ${apiPkg}' to install it.`,
+    )
   }
 
   return {
@@ -42,5 +43,5 @@ module.exports = ({ platform = 'github', ...options }): Plugin => {
     alias: {
       '@vssue/api$': require.resolve(apiPkg),
     },
-  };
-};
+  }
+}

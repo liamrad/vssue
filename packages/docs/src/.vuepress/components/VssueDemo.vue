@@ -1,17 +1,13 @@
-<template>
-  <Vssue :issue-id="issueId" :options="options" />
-</template>
-
 <script>
-import BitbucketV2 from '@vssue/api-bitbucket-v2';
-import GiteaV1 from '@vssue/api-gitea-v1';
-import GiteeV5 from '@vssue/api-gitee-v5';
-import GithubV3 from '@vssue/api-github-v3';
-import GithubV4 from '@vssue/api-github-v4';
-import GitlabV4 from '@vssue/api-gitlab-v4';
+import BitbucketV2 from '@vssue/api-bitbucket-v2'
+import GiteaV1 from '@vssue/api-gitea-v1'
+import GiteeV5 from '@vssue/api-gitee-v5'
+import GithubV3 from '@vssue/api-github-v3'
+import GithubV4 from '@vssue/api-github-v4'
+import GitlabV4 from '@vssue/api-gitlab-v4'
 
 const platforms = {
-  bitbucket: {
+  'bitbucket': {
     options: {
       api: BitbucketV2,
       owner: 'meteorlxy',
@@ -20,7 +16,7 @@ const platforms = {
     },
     issueId: 1,
   },
-  gitea: {
+  'gitea': {
     options: {
       api: GiteaV1,
       owner: 'meteorlxy',
@@ -30,7 +26,7 @@ const platforms = {
     },
     issueId: 1,
   },
-  gitee: {
+  'gitee': {
     options: {
       api: GiteeV5,
       owner: 'meteor_lxy',
@@ -42,7 +38,7 @@ const platforms = {
     },
     issueId: 'IWWRQ',
   },
-  github: {
+  'github': {
     options: {
       api: GithubV3,
       owner: 'meteorlxy',
@@ -62,7 +58,7 @@ const platforms = {
     },
     issueId: 1,
   },
-  gitlab: {
+  'gitlab': {
     options: {
       api: GitlabV4,
       owner: 'meteorlxy',
@@ -72,7 +68,7 @@ const platforms = {
     },
     issueId: 1,
   },
-};
+}
 
 export default {
   name: 'VssueDemo',
@@ -86,12 +82,16 @@ export default {
 
   computed: {
     options() {
-      return platforms[this.platform].options;
+      return platforms[this.platform].options
     },
 
     issueId() {
-      return platforms[this.platform].issueId;
+      return platforms[this.platform].issueId
     },
   },
-};
+}
 </script>
+
+<template>
+  <Vssue :issue-id="issueId" :options="options" />
+</template>

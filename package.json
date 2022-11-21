@@ -2,13 +2,14 @@
   "private": true,
   "scripts": {
     "build": "pnpm --filter vssue... build",
-    "build:docs": "pnpm workspace docs build",
-    "dev": "pnpm workspace vssue dev",
-    "dev:docs": "pnpm workspace docs dev",
+    "build:docs": "pnpm --filter docs build",
+    "dev": "pnpm --filter vssue dev",
+    "dev:docs": "pnpm --filter docs dev",
     "postinstall": "pnpm --filter @vssue/* build",
     "lint": "eslint --ext .js,.ts,.vue packages/",
+    "lint:fix": "eslint --ext .js,.ts,.vue packages/ --fix",
     "release": "node scripts/release.js",
-    "staging": "pnpm workspace vssue staging",
+    "staging": "pnpm --filter vssue staging",
     "test": "jest"
   },
   "husky": {
@@ -38,31 +39,21 @@
     "trailingComma": "es5"
   },
   "devDependencies": {
+    "@antfu/eslint-config": "^0.31.0",
     "@commitlint/cli": "^8.2.0",
     "@commitlint/config-conventional": "^8.2.0",
     "@commitlint/config-lerna-scopes": "^8.2.0",
     "@types/jest": "^24.0.25",
-    "@typescript-eslint/eslint-plugin": "^2.14.0",
-    "@typescript-eslint/parser": "^2.14.0",
     "conventional-changelog-cli": "^2.0.21",
-    "eslint": "^6.8.0",
-    "eslint-config-prettier": "^6.9.0",
-    "eslint-config-standard": "^14.1.0",
-    "eslint-plugin-import": "^2.19.1",
-    "eslint-plugin-node": "^11.0.0",
-    "eslint-plugin-prettier": "^3.1.2",
-    "eslint-plugin-promise": "^4.2.1",
-    "eslint-plugin-standard": "^4.0.1",
-    "eslint-plugin-vue": "^5.2.2",
+    "eslint": "^8.28.0",
     "execa": "^1.0.0",
     "husky": "^2.3.0",
     "jest": "^24.8.0",
     "lerna": "^3.14.1",
     "lint-staged": "^8.1.7",
-    "prettier": "^1.19.1",
     "rimraf": "^2.6.3",
     "sort-package-json": "^1.22.1",
     "ts-jest": "^24.2.0",
-    "typescript": "^3.7.4"
+    "typescript": "^4.9.3"
   }
 }

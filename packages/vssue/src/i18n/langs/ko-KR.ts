@@ -1,4 +1,4 @@
-import VueI18n from 'vue-i18n';
+import type VueI18n from 'vue-i18n'
 
 const messages: VueI18n.LocaleMessageObject = {
   // auth
@@ -46,9 +46,9 @@ const messages: VueI18n.LocaleMessageObject = {
   noComments: '댓글이 하나도 없습니다. 첫 댓글을 남겨보세요!',
 
   // alerts
-  reactionGiven: `이미 '{reaction}' 반응을 남겼습니다`,
+  reactionGiven: '이미 \'{reaction}\' 반응을 남겼습니다',
   deleteConfirm: '정말 댓글을 삭제하시겠습니까?',
   deleteFailed: '댓글 삭제에 실패하였습니다',
-};
+}
 
-export default messages;
+export default messages

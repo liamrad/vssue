@@ -1,11 +1,11 @@
-import { VssueAPI } from 'vssue';
+import type { VssueAPI } from 'vssue'
 
-import {
-  ResponseUser,
-  ResponseIssue,
+import type {
   ResponseComment,
+  ResponseIssue,
   ResponseReaction,
-} from './types';
+  ResponseUser,
+} from './types'
 
 export function normalizeUser(user: ResponseUser): VssueAPI.User {
   // workaround for deleted user
@@ -15,13 +15,13 @@ export function normalizeUser(user: ResponseUser): VssueAPI.User {
       username: 'ghost',
       avatar: 'https://avatars3.githubusercontent.com/u/10137?v=4',
       homepage: 'https://github.com/ghost',
-    };
+    }
   }
   return {
     username: user.login,
     avatar: user.avatarUrl,
     homepage: user.url,
-  };
+  }
 }
 
 export function normalizeIssue(issue: ResponseIssue): VssueAPI.Issue {
@@ -30,11 +30,11 @@ export function normalizeIssue(issue: ResponseIssue): VssueAPI.Issue {
     title: issue.title,
     content: issue.body,
     link: issue.url,
-  };
+  }
 }
 
 export function normalizeReactions(
-  reactions: ResponseReaction[]
+  reactions: ResponseReaction[],
 ): VssueAPI.Reactions {
   return {
     like: reactions.find(item => item.content === 'THUMBS_UP')!.users
@@ -42,7 +42,7 @@ export function normalizeReactions(
     unlike: reactions.find(item => item.content === 'THUMBS_DOWN')!.users
       .totalCount,
     heart: reactions.find(item => item.content === 'HEART')!.users.totalCount,
-  };
+  }
 }
 
 export function normalizeComment(comment: ResponseComment): VssueAPI.Comment {
@@ -54,14 +54,17 @@ export function normalizeComment(comment: ResponseComment): VssueAPI.Comment {
     createdAt: comment.createdAt,
     updatedAt: comment.updatedAt,
     reactions: normalizeReactions(comment.reactionGroups),
-  };
+  }
 }
 
 export function mapReactionName(reaction: keyof VssueAPI.Reactions): string {
-  if (reaction === 'like') return 'THUMBS_UP';
-  if (reaction === 'unlike') return 'THUMBS_DOWN';
-  if (reaction === 'heart') return 'HEART';
-  return reaction;
+  if (reaction === 'like')
+    return 'THUMBS_UP'
+  if (reaction === 'unlike')
+    return 'THUMBS_DOWN'
+  if (reaction === 'heart')
+    return 'HEART'
+  return reaction
 }
 
 export default {
@@ -70,4 +73,4 @@ export default {
   normalizeComment,
   normalizeReactions,
   mapReactionName,
-};
+}

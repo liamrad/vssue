@@ -1,12 +1,12 @@
-import { VssueAPI } from 'vssue';
-import { ResponseUser, ResponseIssue, ResponseComment } from './types';
+import type { VssueAPI } from 'vssue'
+import type { ResponseComment, ResponseIssue, ResponseUser } from './types'
 
 export function normalizeUser(user: ResponseUser): VssueAPI.User {
   return {
     username: user.nickname,
     avatar: user.links.avatar.href,
     homepage: user.links.html.href,
-  };
+  }
 }
 
 export function normalizeIssue(issue: ResponseIssue): VssueAPI.Issue {
@@ -15,7 +15,7 @@ export function normalizeIssue(issue: ResponseIssue): VssueAPI.Issue {
     title: issue.title,
     content: issue.content.raw,
     link: issue.links.html.href,
-  };
+  }
 }
 
 export function normalizeComment(comment: ResponseComment): VssueAPI.Comment {
@@ -27,11 +27,11 @@ export function normalizeComment(comment: ResponseComment): VssueAPI.Comment {
     createdAt: comment.created_on,
     updatedAt: comment.updated_on,
     reactions: null,
-  };
+  }
 }
 
 export default {
   normalizeUser,
   normalizeIssue,
   normalizeComment,
-};
+}

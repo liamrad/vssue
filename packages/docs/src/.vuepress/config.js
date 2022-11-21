@@ -13,9 +13,9 @@ module.exports = {
   },
 
   head: [
-    ['link', { rel: 'icon', href: `/favicon.ico` }],
+    ['link', { rel: 'icon', href: '/favicon.ico' }],
     // <link rel="manifest" href="/manifest.json">
-    ['link', { rel: 'manifest', href: `/manifest.json` }],
+    ['link', { rel: 'manifest', href: '/manifest.json' }],
     // <meta name="theme-color" content="#34c88a">
     ['meta', { name: 'theme-color', content: '#34c88a' }],
     // <link rel="icon" type="image/png" sizes="32x32" href="/assets/icons/favicon-32x32.png">
@@ -25,7 +25,7 @@ module.exports = {
         rel: 'icon',
         type: 'image/png',
         sizes: '32x32',
-        href: `/assets/icons/favicon-32x32.png`,
+        href: '/assets/icons/favicon-32x32.png',
       },
     ],
     // <link rel="icon" type="image/png" sizes="16x16" href="/assets/icons/favicon-16x16.png">
@@ -35,7 +35,7 @@ module.exports = {
         rel: 'icon',
         type: 'image/png',
         sizes: '16x16',
-        href: `/assets/icons/favicon-16x16.png`,
+        href: '/assets/icons/favicon-16x16.png',
       },
     ],
     // <link rel="apple-touch-icon" sizes="180x180" href="/assets/icons/apple-touch-icon.png">
@@ -44,7 +44,7 @@ module.exports = {
       {
         rel: 'apple-touch-icon',
         sizes: '180x180',
-        href: `/assets/icons/apple-touch-icon.png`,
+        href: '/assets/icons/apple-touch-icon.png',
       },
     ],
     // <meta name="application-name" content="Vssue">
@@ -116,7 +116,7 @@ module.exports = {
           '/guide/': sidebarGuide(
             'Guide',
             'Set up OAuth App',
-            'Static Site Tools'
+            'Static Site Tools',
           ),
         },
       },
@@ -192,10 +192,10 @@ module.exports = {
             chunks: 'all',
           },
         },
-      });
+      })
     }
   },
-};
+}
 
 function sidebarDemo(title) {
   return [
@@ -211,7 +211,7 @@ function sidebarDemo(title) {
         'gitlab',
       ],
     },
-  ];
+  ]
 }
 
 function sidebarGuide(titleGuide, titleOAuthApp, titleSiteTools) {
@@ -237,5 +237,5 @@ function sidebarGuide(titleGuide, titleOAuthApp, titleSiteTools) {
       collapsable: false,
       children: ['vuepress', 'nuxt', 'gridsome'],
     },
-  ];
+  ]
 }

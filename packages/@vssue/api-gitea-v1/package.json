@@ -26,8 +26,9 @@
     "build": "rimraf lib types && tsc -p tsconfig.json"
   },
   "dependencies": {
-    "@vssue/utils": "^1.4.7",
-    "axios": "^0.21.1"
+    "@vssue/utils": "workspace:^1.4.7",
+    "axios": "^0.21.1",
+    "vssue": "workspace:^1.4.8"
   },
   "publishConfig": {
     "access": "public"

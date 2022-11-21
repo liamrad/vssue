@@ -1,18 +1,18 @@
-import { VssueAPI } from 'vssue';
+import type { VssueAPI } from 'vssue'
 
-import {
-  ResponseUser,
-  ResponseIssue,
+import type {
   ResponseComment,
+  ResponseIssue,
   ResponseReactionsSummary,
-} from './types';
+  ResponseUser,
+} from './types'
 
 export function normalizeUser(user: ResponseUser): VssueAPI.User {
   return {
     username: user.login,
     avatar: user.avatar_url,
     homepage: user.html_url,
-  };
+  }
 }
 
 export function normalizeIssue(issue: ResponseIssue): VssueAPI.Issue {
@@ -21,17 +21,17 @@ export function normalizeIssue(issue: ResponseIssue): VssueAPI.Issue {
     title: issue.title,
     content: issue.body,
     link: issue.html_url,
-  };
+  }
 }
 
 export function normalizeReactions(
-  reactions: ResponseReactionsSummary
+  reactions: ResponseReactionsSummary,
 ): VssueAPI.Reactions {
   return {
     like: reactions['+1'],
     unlike: reactions['-1'],
     heart: reactions.heart,
-  };
+  }
 }
 
 export function normalizeComment(comment: ResponseComment): VssueAPI.Comment {
@@ -43,13 +43,15 @@ export function normalizeComment(comment: ResponseComment): VssueAPI.Comment {
     createdAt: comment.created_at,
     updatedAt: comment.updated_at,
     reactions: normalizeReactions(comment.reactions),
-  };
+  }
 }
 
 export function mapReactionName(reaction: keyof VssueAPI.Reactions): string {
-  if (reaction === 'like') return '+1';
-  if (reaction === 'unlike') return '-1';
-  return reaction;
+  if (reaction === 'like')
+    return '+1'
+  if (reaction === 'unlike')
+    return '-1'
+  return reaction as string
 }
 
 export default {
@@ -58,4 +60,4 @@ export default {
   normalizeComment,
   normalizeReactions,
   mapReactionName,
-};
+}
