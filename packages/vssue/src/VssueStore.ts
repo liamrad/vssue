@@ -147,7 +147,7 @@ class VssueStore extends Vue implements Vssue.Store {
       // init comments
       await this.initComments()
     }
-    catch (e) {
+    catch (e: any) {
       if (e.response && [401, 403].includes(e.response.status)) {
         // in some cases, require login to load comments
         this.isLoginRequired = true
@@ -323,7 +323,7 @@ class VssueStore extends Vue implements Vssue.Store {
 
       return comments
     }
-    catch (e) {
+    catch (e: any) {
       if (
         e.response
         && [401, 403].includes(e.response.status)
