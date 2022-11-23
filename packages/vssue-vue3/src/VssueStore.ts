@@ -21,6 +21,7 @@ interface VssueState {
   isLoadingComments: boolean
   isCreatingComment: boolean
   isUpdatingComment: boolean
+  replyContent: string
 }
 
 export function useVssueStore() {
@@ -49,6 +50,7 @@ export function useVssueStore() {
     isLoadingComments: false,
     isCreatingComment: false,
     isUpdatingComment: false,
+    replyContent: '',
   })
 
   const version = computed((): string => import.meta.env.VUE_APP_VERSION)
@@ -483,6 +485,11 @@ export function useVssueStore() {
     VssueState.accessToken = token
   }
 
+  function setReplyContent(comment: VssueAPI.Comment) {
+    const quotedComment = comment.contentRaw.replace(/\n/g, '\n> ')
+    VssueState.replyContent = `@${comment.author.username}\n\n> ${quotedComment}\n\n`
+  }
+
   return {
     VssueState,
     version,
@@ -507,5 +514,6 @@ export function useVssueStore() {
     handleAuth,
     getAccessToken,
     setAccessToken,
+    setReplyContent,
   }
 }

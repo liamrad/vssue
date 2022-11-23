@@ -1,7 +1,7 @@
 import { Plugin as PluginObject, DefineComponent } from 'vue';
 import type { ComputedRef } from 'vue'
 import 'vue-i18n';
-import { VssueAPI } from './api';
+import type { VssueAPI } from './api';
 
 export namespace Vssue {
   export type Options = {

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, inject, nextTick, onBeforeUnmount, ref } from 'vue'
+import { computed, inject, nextTick, onBeforeUnmount, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { Vssue, VssueAPI } from '../../types'
 import VssueButton from './VssueButton.vue'
@@ -20,19 +20,13 @@ const isSubmitDisabled = computed((): boolean => content.value === '' || vssue.i
 const contentRows = computed((): number => content.value.split('\n').length - 1)
 const inputRows = computed((): number => contentRows.value < 3 ? 5 : contentRows.value + 2)
 
-// TODO
-// vssue.$on('reply-comment', (comment: any) => {
-//   const quotedComment = comment.contentRaw.replace(/\n/g, '\n> ')
-//   const replyContent = `@${comment.author.username}\n\n> ${quotedComment}\n\n`
-//   content.value = content.value.concat(replyContent)
-//   nextTick(() => {
-//     input.value?.focus()
-//   })
-// })
-
-// onBeforeUnmount(() => {
-//   vssue.$off('reply-comment')
-// })
+watch(() => vssue.VssueState.replyContent, (replyContent) => {
+  // content.value = content.value.concat(n)
+  content.value = `${replyContent}\n${content.value}`
+  nextTick(() => {
+    input.value?.focus()
+  })
+})
 
 const submit = async (): Promise<void> => {
   if (isSubmitDisabled.value)

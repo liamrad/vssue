@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, provide, watch } from 'vue'
+import { onMounted, provide, ref, watch } from 'vue'
 import type { Vssue as VssueNamespace } from '../types'
 
 import Iconfont from './components/Iconfont.vue'

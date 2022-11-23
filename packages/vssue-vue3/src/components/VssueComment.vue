@@ -319,7 +319,7 @@ const deleteComment = async (): Promise<void> => {
             <span
               v-show="!editMode"
               class="vssue-comment-operation"
-              @click="emits('reply-comment', comment)"
+              @click="vssue.setReplyContent(comment)"
             >
               <VssueIcon name="reply" :title="t('reply')" />
             </span>
