@@ -18,7 +18,7 @@ const status = computed((): string | null => {
     return 'initializing'
   }
   else if (vssue.VssueState.isIssueNotCreated && !vssue.VssueState.isCreatingIssue) {
-    if (vssue.isAdmin || !vssue.isLogined)
+    if (vssue.isAdmin.value || !vssue.isLogined.value)
       return 'issueNotCreated'
     else
       return 'failed'

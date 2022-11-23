@@ -18,6 +18,9 @@ const props = withDefaults(defineProps<{
   issueId: null,
   options: () => ({}),
 })
+
+// const emits = defineEmits(['error'])
+
 // const vssue = new VssueStore()
 const vssue = useVssueStore()
 // const vssue = { ...VssueStore.VssueState, ...VssueStore }

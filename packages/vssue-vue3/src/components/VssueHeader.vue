@@ -59,7 +59,7 @@ const { t } = useI18n()
 
       <a
         href="https://github.com/meteorlxy/vssue"
-        :title="`Vssue v${vssue.version}`"
+        :title="`Vssue v${vssue.version.value}`"
         target="_blank"
         rel="noopener noreferrer"
       >

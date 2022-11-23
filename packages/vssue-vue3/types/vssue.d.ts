@@ -1,4 +1,5 @@
 import { Plugin as PluginObject, DefineComponent } from 'vue';
+import type { ComputedRef } from 'vue'
 import 'vue-i18n';
 import { VssueAPI } from './api';
 
@@ -33,9 +34,9 @@ export namespace Vssue {
   export type Component = typeof DefineComponent;
 
   export interface Store extends DefineComponent {
-    version: string;
+    version: ComputedRef<string>;
     title: string | ((options: Vssue.Options) => string);
-    issueTitle: string;
+    issueTitle: ComputedRef<string>;
     issueId: number | string | null;
     options: Vssue.Options | null;
     API: VssueAPI.Instance | null;
@@ -52,9 +53,9 @@ export namespace Vssue {
     isLoadingComments: boolean;
     isCreatingComment: boolean;
     isUpdatingComment: boolean;
-    isLogined: boolean;
-    isAdmin: boolean;
-    isPending: boolean;
+    isLogined: ComputedRef<boolean>;
+    isAdmin: ComputedRef<boolean>;
+    isPending: ComputedRef<boolean>;
     setOptions(options: Partial<Vssue.Options>): void;
     init(): Promise<void>;
     postIssue(): Promise<VssueAPI.Issue | void>;

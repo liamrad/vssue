@@ -8,7 +8,7 @@ const { t } = useI18n()
 
 const vssue: Vssue.Store = inject('vssue') as Vssue.Store
 
-const disabled = computed((): boolean => vssue.isPending)
+const disabled = computed((): boolean => vssue.isPending.value)
 const pageCount = computed((): number => {
   const pageCount = Math.ceil(
     vssue.VssueState.comments!.count / vssue.VssueState.comments!.perPage,

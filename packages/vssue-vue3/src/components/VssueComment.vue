@@ -91,7 +91,7 @@ const resetEdit = (): void => {
 }
 const putComment = async (): Promise<void> => {
   try {
-    if (vssue.isPending)
+    if (vssue.isPending.value)
       return
 
     if (editContent.value !== props.comment.contentRaw) {
@@ -123,7 +123,7 @@ const putComment = async (): Promise<void> => {
 }
 const deleteComment = async (): Promise<void> => {
   try {
-    if (vssue.isPending)
+    if (vssue.isPending.value)
       return
 
     if (!window.confirm(t('deleteConfirm') as string))
@@ -144,7 +144,7 @@ const deleteComment = async (): Promise<void> => {
       if (vssue.VssueState.comments!.data.length > 1) {
         vssue.VssueState.comments!.data.splice(
           vssue.VssueState.comments!.data.findIndex(
-            item => item.id === props.comment.id,
+            (item: any) => item.id === props.comment.id,
           ),
           1,
         )
@@ -305,7 +305,7 @@ const deleteComment = async (): Promise<void> => {
             </span>
 
             <span
-              v-if="comment.author.username === currentUser || vssue.isAdmin"
+              v-if="comment.author.username === currentUser || vssue.isAdmin.value"
               v-show="!editMode"
               class="vssue-comment-operation"
               @click="deleteComment()"

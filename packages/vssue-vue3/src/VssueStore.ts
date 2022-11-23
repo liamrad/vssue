@@ -1,4 +1,4 @@
-import { computed, defineEmits, reactive, watch } from 'vue'
+import { computed, reactive, watch } from 'vue'
 import { getCleanURL } from '@vssue/utils'
 import type { Vssue, VssueAPI } from '../types'
 import i18n from './i18n'
@@ -24,8 +24,6 @@ interface VssueState {
 }
 
 export function useVssueStore() {
-  const emits = defineEmits(['error'])
-
   // eslint-disable-next-line @typescript-eslint/no-unused-vars, prefer-const
   let { locale, messages } = i18n.global
 
@@ -81,10 +79,10 @@ export function useVssueStore() {
 
   watch(() => VssueState.query.perPage, () => {
     VssueState.query.page = 1
-    // getComments()
+    getComments()
   })
   watch(() => [VssueState.query.page, VssueState.query.sort], () => {
-    // getComments()
+    getComments()
   })
 
   function setOptions(options: Partial<Vssue.Options>) {
@@ -270,7 +268,7 @@ export function useVssueStore() {
     }
   }
 
-  async function getComments(): Promise<VssueAPI.Comments | void> {
+  async function getComments(emits?: (event: 'error', ...args: any[]) => void): Promise<VssueAPI.Comments | void> {
     try {
       if (!VssueState.API || !VssueState.issue || VssueState.isLoadingComments)
         return
@@ -302,7 +300,7 @@ export function useVssueStore() {
         VssueState.isLoginRequired = true
       }
       else {
-        emits('error', e)
+        emits?.('error', e)
         throw e
       }
     }
@@ -315,7 +313,7 @@ export function useVssueStore() {
     content,
   }: {
     content: string
-  }): Promise<VssueAPI.Comment | void> {
+  }, emits?: (event: 'error', ...args: any[]) => void): Promise<VssueAPI.Comment | void> {
     try {
       if (!VssueState.API || !VssueState.issue || VssueState.isCreatingComment)
         return
@@ -331,7 +329,7 @@ export function useVssueStore() {
       return comment
     }
     catch (e) {
-      emits('error', e)
+      emits?.('error', e)
       throw e
     }
     finally {
@@ -345,7 +343,7 @@ export function useVssueStore() {
   }: {
     commentId: number | string
     content: string
-  }): Promise<VssueAPI.Comment | void> {
+  }, emits?: (event: 'error', ...args: any[]) => void): Promise<VssueAPI.Comment | void> {
     try {
       if (!VssueState.API || !VssueState.issue)
         return
@@ -360,7 +358,7 @@ export function useVssueStore() {
       return comment
     }
     catch (e) {
-      emits('error', e)
+      emits?.('error', e)
       throw e
     }
   }
@@ -369,7 +367,7 @@ export function useVssueStore() {
     commentId,
   }: {
     commentId: number | string
-  }): Promise<boolean | void> {
+  }, emits?: (event: 'error', ...args: any[]) => void): Promise<boolean | void> {
     try {
       if (!VssueState.API || !VssueState.issue)
         return
@@ -383,7 +381,7 @@ export function useVssueStore() {
       return success
     }
     catch (e) {
-      emits('error', e)
+      emits?.('error', e)
       throw e
     }
   }
@@ -392,7 +390,7 @@ export function useVssueStore() {
     commentId,
   }: {
     commentId: string | number
-  }): Promise<VssueAPI.Reactions | void> {
+  }, emits?: (event: 'error', ...args: any[]) => void): Promise<VssueAPI.Reactions | void> {
     try {
       if (!VssueState.API || !VssueState.issue)
         return
@@ -406,7 +404,7 @@ export function useVssueStore() {
       return reactions
     }
     catch (e) {
-      emits('error', e)
+      emits?.('error', e)
       throw e
     }
   }
@@ -417,7 +415,7 @@ export function useVssueStore() {
   }: {
     commentId: string | number
     reaction: keyof VssueAPI.Reactions
-  }): Promise<boolean> {
+  }, emits?: (event: 'error', ...args: any[]) => void): Promise<boolean> {
     try {
       if (!VssueState.API || !VssueState.issue)
         return false
@@ -432,7 +430,7 @@ export function useVssueStore() {
       return success
     }
     catch (e) {
-      emits('error', e)
+      emits?.('error', e)
       throw e
     }
   }

@@ -20,6 +20,7 @@ const vssue: Vssue.Store = inject('vssue') as Vssue.Store
         :key="comment.id"
         :comment="comment"
         @editComment="comment.reactions = $event"
+        @reply-comment="() => {}"
       />
     </TransitionFade>
 

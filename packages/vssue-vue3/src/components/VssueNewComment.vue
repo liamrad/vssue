@@ -16,7 +16,7 @@ const user = computed((): VssueAPI.User | null => vssue.VssueState.user)
 const platform = computed((): string | null | undefined => vssue.VssueState.API?.platform.name)
 const loading = computed((): boolean => vssue.VssueState.isCreatingComment)
 const isInputDisabled = computed((): boolean => loading.value || user.value === null || vssue.VssueState.issue === null)
-const isSubmitDisabled = computed((): boolean => content.value === '' || vssue.isPending || vssue.VssueState.issue === null)
+const isSubmitDisabled = computed((): boolean => content.value === '' || vssue.isPending.value || vssue.VssueState.issue === null)
 const contentRows = computed((): number => content.value.split('\n').length - 1)
 const inputRows = computed((): number => contentRows.value < 3 ? 5 : contentRows.value + 2)
 
