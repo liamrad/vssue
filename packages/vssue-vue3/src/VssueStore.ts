@@ -87,6 +87,9 @@ export function useVssueStore() {
     getComments()
   })
 
+  /**
+   * Set options of Vssue
+   */
   function setOptions(options: Partial<Vssue.Options>) {
     VssueState.options = Object.assign(
       {
@@ -121,6 +124,9 @@ export function useVssueStore() {
     }
   }
 
+  /**
+   * Initialization
+   */
   async function init(): Promise<void> {
     try {
       // init VssueStore
@@ -141,6 +147,9 @@ export function useVssueStore() {
     }
   }
 
+  /**
+   * Init VssueStore
+   */
   async function initStore(): Promise<void> {
     try {
       if (!VssueState.options)
@@ -190,6 +199,9 @@ export function useVssueStore() {
     }
   }
 
+  /**
+   * Init comments
+   */
   async function initComments(): Promise<void> {
     if (!VssueState.API || !VssueState.options)
       return
@@ -233,6 +245,9 @@ export function useVssueStore() {
     }
   }
 
+  /**
+   * Post a new issue
+   */
   async function postIssue(): Promise<void> {
     if (!VssueState.API || !VssueState.options || VssueState.issue || VssueState.issueId)
       return
@@ -270,6 +285,9 @@ export function useVssueStore() {
     }
   }
 
+  /**
+   * Get comments of this vssue according to the issue id
+   */
   async function getComments(emits?: (event: 'error', ...args: any[]) => void): Promise<VssueAPI.Comments | void> {
     try {
       if (!VssueState.API || !VssueState.issue || VssueState.isLoadingComments)
@@ -311,6 +329,9 @@ export function useVssueStore() {
     }
   }
 
+  /**
+   * Post a new comment
+   */
   async function postComment({
     content,
   }: {
@@ -339,6 +360,9 @@ export function useVssueStore() {
     }
   }
 
+  /**
+   * Edit a comment
+   */
   async function putComment({
     commentId,
     content,
@@ -365,6 +389,9 @@ export function useVssueStore() {
     }
   }
 
+  /**
+   * Delete a new comment
+   */
   async function deleteComment({
     commentId,
   }: {
@@ -388,6 +415,9 @@ export function useVssueStore() {
     }
   }
 
+  /**
+   * Get reactions of a comment
+   */
   async function getCommentReactions({
     commentId,
   }: {
@@ -411,6 +441,9 @@ export function useVssueStore() {
     }
   }
 
+  /**
+   * Create a new reaction to a certain comment
+   */
   async function postCommentReaction({
     commentId,
     reaction,
@@ -437,17 +470,26 @@ export function useVssueStore() {
     }
   }
 
+  /**
+   * Redirect to the platform's authorization page
+   */
   function login(): void {
     if (!VssueState.API)
       return
     VssueState.API.redirectAuth()
   }
 
+  /**
+   * Clean the access token stored in local storage
+   */
   function logout(): void {
     setAccessToken(null)
     VssueState.user = null
   }
 
+  /**
+   * Handle authorization and set access_token
+   */
   async function handleAuth(): Promise<void> {
     if (!VssueState.API)
       return
@@ -471,11 +513,17 @@ export function useVssueStore() {
     }
   }
 
+  /**
+   * Get access token from local storage
+   */
   function getAccessToken(): VssueAPI.AccessToken {
     VssueState.accessToken = window.localStorage.getItem(accessTokenKey.value)
     return VssueState.accessToken
   }
 
+  /**
+   * Save access token to local storage
+   */
   function setAccessToken(token: VssueAPI.AccessToken): void {
     if (token === null)
       window.localStorage.removeItem(accessTokenKey.value)
@@ -485,6 +533,9 @@ export function useVssueStore() {
     VssueState.accessToken = token
   }
 
+  /**
+   * Set reply content
+   */
   function setReplyContent(comment: VssueAPI.Comment) {
     const quotedComment = comment.contentRaw.replace(/\n/g, '\n> ')
     VssueState.replyContent = `@${comment.author.username}\n\n> ${quotedComment}\n\n`

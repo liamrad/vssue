@@ -1,12 +1,11 @@
 <script setup lang="ts">
-import { onMounted, provide, ref, watch } from 'vue'
+import { onMounted, provide, watch } from 'vue'
 import type { Vssue as VssueNamespace } from '../types'
 
 import Iconfont from './components/Iconfont.vue'
 import VssueBody from './components/VssueBody.vue'
 import VssueHeader from './components/VssueHeader.vue'
 
-// import VssueStore from './VssueStore'
 import { useVssueStore } from './VssueStore'
 
 const props = withDefaults(defineProps<{
@@ -19,12 +18,7 @@ const props = withDefaults(defineProps<{
   options: () => ({}),
 })
 
-// const emits = defineEmits(['error'])
-
-// const vssue = new VssueStore()
 const vssue = useVssueStore()
-// const vssue = { ...VssueStore.VssueState, ...VssueStore }
-// console.log(vssue)
 
 provide('vssue', vssue)
 

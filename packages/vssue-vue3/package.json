@@ -20,6 +20,7 @@
   "dependencies": {
     "@vssue/api-github-v4": "workspace:^1.4.7",
     "@vssue/utils": "workspace:^1.4.7",
+    "github-markdown-css": "^3.0.1",
     "stylus": "^0.54.5",
     "vue": "^3.2.38",
     "vue-i18n": "^9.2.2"
