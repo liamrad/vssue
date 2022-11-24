@@ -5,6 +5,6 @@
 <template>
   <h2>example</h2>
   <Vssue
-    issue-id="1"
+    :issue-id="1"
   />
 </template>
