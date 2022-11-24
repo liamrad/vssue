@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "jsx": "preserve",
+    "strict": true,
+    "target": "ES2015",
+    "module": "ESNext",
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "moduleResolution": "Node",
+    "lib": ["esnext", "dom"],
+    "paths": {
+      // vite-plugin-dts 打包时出现了无法从 node_modules 的包中推断类型的错误
+      // See https://github.com/qmhc/vite-plugin-dts#take-errors-that-unable-to-infer-types-from-packages-which-under-node_modules
+      "@intlify/core-base": ["node_modules/@intlify/core-base"]
+    },
+    "types": ["vite/client"],
+    "resolveJsonModule": true
+  }
+}
