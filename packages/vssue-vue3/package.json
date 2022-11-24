@@ -13,7 +13,12 @@
     "url": "git+https://github.com/liamrad/vssue.git"
   },
   "bugs": "https://github.com/liamrad/vssue/issues",
-  "keywords": [],
+  "keywords": [
+    "vue",
+    "vue3",
+    "comment",
+    "vssue"
+  ],
   "exports": {
     ".": {
       "require": "./dist/vssue-vue3.umd.cjs",
