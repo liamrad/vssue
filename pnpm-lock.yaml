@@ -29,7 +29,7 @@ importers:
 
   examples:
     specifiers:
-      '@liamrad/vssue-vue3': workspace:^1.0.0
+      '@liamrad/vssue-vue3': workspace:*
     dependencies:
       '@liamrad/vssue-vue3': link:../packages/vssue-vue3
 

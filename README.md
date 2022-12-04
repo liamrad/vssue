@@ -4,6 +4,17 @@
 
 [Vssue](https://www.github.com/meteorlxy/vssue). 
 
-## For Vue3
+## Packages
 
-[@liamrad/vssue-vue3](./packages/vssue-vue3/)
+### vssue-vue3
+
+[![NPM version](https://img.shields.io/npm/v/@liamrad/vssue-vue3?color=a1b858&label=)](https://www.npmjs.com/package/@liamrad/vssue-vue3)
+
+## Development
+
+```bash
+# ~
+pnpm install
+
+pnpm run dev
+```
